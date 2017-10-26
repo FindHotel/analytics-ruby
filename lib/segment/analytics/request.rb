@@ -16,7 +16,7 @@ module Segment
       # public: Creates a new request object to send analytics batch
       #
       def initialize(options = {})
-        options[:host] ||= HOST
+        options[:host] ||= (options[:host] || HOST)
         options[:port] ||= PORT
         options[:ssl] ||= SSL
         options[:headers] ||= HEADERS
@@ -39,7 +39,10 @@ module Segment
         status, error = nil, nil
         remaining_retries = @retries
         backoff = @backoff
-        headers = { 'Content-Type' => 'application/json', 'accept' => 'application/json' }
+        # pass the API key also in the header, as expected by AWS API gateway
+        headers = { 'Content-Type' => 'application/json',
+                    'accept' => 'application/json',
+                    'x-api-key' => write_key }
         begin
           payload = JSON.generate :sentAt => datetime_in_iso8601(Time.new), :batch => batch
           request = Net::HTTP::Post.new(@path, headers)
