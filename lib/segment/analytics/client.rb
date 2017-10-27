@@ -22,7 +22,7 @@ module Segment
 
         @queue = Queue.new
         @write_key = attrs[:write_key]
-        attrs[:host] = Defaults::Request::HOST unless attrs[:host]
+        attrs[:host] ||= Defaults::Request::HOST
         @max_queue_size = attrs[:max_queue_size] || Defaults::Queue::MAX_SIZE
         @options = attrs
         @worker_mutex = Mutex.new
@@ -357,8 +357,12 @@ module Segment
         }
       end
 
-      def check_user_id! attrs
-        attrs[:anonymous_id] = (attrs[:user_id] ? Digest::MD5.hexdigest(attrs[:user_id].to_s) : SecureRandom.uuid) unless attrs[:anonymous_id]
+      def check_user_id!(attrs)
+        attrs[:anonymous_id] ||= if attrs[:user_id]
+          Digest::MD5.hexdigest(attrs[:user_id].to_s)
+          else
+            SecureRandom.uuid
+          end
       end
 
       def ensure_worker_running

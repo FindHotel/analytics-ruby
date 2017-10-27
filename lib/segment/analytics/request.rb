@@ -40,9 +40,12 @@ module Segment
         remaining_retries = @retries
         backoff = @backoff
         # pass the API key also in the header, as expected by AWS API gateway
-        headers = { 'Content-Type' => 'application/json',
-                    'accept' => 'application/json',
-                    'x-api-key' => write_key }
+        headers = {
+          'Content-Type' => 'application/json',
+          'accept' => 'application/json',
+          'x-api-key' => write_key
+        }
+
         begin
           payload = JSON.generate :sentAt => datetime_in_iso8601(Time.new), :batch => batch
           request = Net::HTTP::Post.new(@path, headers)

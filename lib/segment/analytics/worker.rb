@@ -43,7 +43,7 @@ module Segment
             end
           end
 
-          res = Request.new(host: @host).post @write_key, @batch
+          res = Request.new(host: @host).post(@write_key, @batch)
 
           @on_error.call res.status, res.error unless res.status == 200
           @lock.synchronize { @batch.clear }
