@@ -24,6 +24,7 @@ module Segment
         symbolize_keys! options
         @queue = queue
         @write_key = write_key
+        @host = options[:host] || Defaults::Request::HOST
         @batch_size = options[:batch_size] || Queue::BATCH_SIZE
         @on_error = options[:on_error] || Proc.new { |status, error| }
         @batch = []
@@ -42,7 +43,7 @@ module Segment
             end
           end
 
-          res = Request.new.post @write_key, @batch
+          res = Request.new(host: @host).post(@write_key, @batch)
 
           @on_error.call res.status, res.error unless res.status == 200
           @lock.synchronize { @batch.clear }

@@ -1,3 +1,5 @@
+require 'digest'
+require 'securerandom'
 require 'thread'
 require 'time'
 require 'segment/analytics/utils'
@@ -20,6 +22,7 @@ module Segment
 
         @queue = Queue.new
         @write_key = attrs[:write_key]
+        attrs[:host] ||= Defaults::Request::HOST
         @max_queue_size = attrs[:max_queue_size] || Defaults::Queue::MAX_SIZE
         @options = attrs
         @worker_mutex = Mutex.new
@@ -354,8 +357,12 @@ module Segment
         }
       end
 
-      def check_user_id! attrs
-        fail ArgumentError, 'Must supply either user_id or anonymous_id' unless attrs[:user_id].present? || attrs[:anonymous_id].present?
+      def check_user_id!(attrs)
+        attrs[:anonymous_id] ||= if attrs[:user_id]
+          Digest::MD5.hexdigest(attrs[:user_id].to_s)
+          else
+            SecureRandom.uuid
+          end
       end
 
       def ensure_worker_running

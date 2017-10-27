@@ -21,7 +21,7 @@ gem install 'analytics-ruby'
 
 Create an instance of the Analytics object:
 ```ruby
-analytics = Segment::Analytics.new(write_key: 'YOUR_WRITE_KEY')
+analytics = Segment::Analytics.new(write_key: 'YOUR_WRITE_KEY', host: 'YOUR_API_HOST')
 ```
 
 Identify the user for the people section, see more [here](https://segment.com/docs/libraries/ruby/#identify).

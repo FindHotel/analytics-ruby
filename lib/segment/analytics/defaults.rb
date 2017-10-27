@@ -12,8 +12,8 @@ module Segment
       end
 
       module Queue
-        BATCH_SIZE = 100
-        MAX_SIZE = 10000
+        BATCH_SIZE = 1_000
+        MAX_SIZE = 100_000
       end
     end
   end
